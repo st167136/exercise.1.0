@@ -1,7 +1,6 @@
 * text=auto !eol
 /.classpath -text
 /.project -text
-.settings/org.eclipse.jdt.core.prefs -text
 doc/Aufgabe[!!-~]-[!!-~]Währungskurse[!!-~]verarbeiten.pdf -text
 src/de/example/iata/IataExchangeRateApplication.java -text
 src/de/example/iata/IataExchangeRateMain.java -text
