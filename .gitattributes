@@ -1,6 +1,7 @@
 * text=auto !eol
 /.classpath -text
 /.project -text
+/BewerberAufgabeCheatSheet.docx -text
 doc/Aufgabe[!!-~]-[!!-~]Währungskurse[!!-~]verarbeiten.pdf -text
 src/de/example/iata/IataExchangeRateApplication.java -text
 src/de/example/iata/IataExchangeRateMain.java -text
