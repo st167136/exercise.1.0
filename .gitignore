@@ -1,0 +1,52 @@
+# Based on https://www.gitignore.io/api/java,java-web,maven,eclipse,sonarqube,windows
+
+### Windows ###
+Thumbs.db
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+
+# Windows shortcuts
+*.lnk
+
+### Eclipse ###
+.metadata/
+bin/
+tmp/
+*.tmp
+*.bak
+
+# Annotation Processing
+.apt_generated_tests/
+
+# Code Recommenders
+.recommenders/
+
+### Java ###
+*.class
+*.log
+hs_err_pid*
+*.jpage
+
+# Package Files #
+*.jar
+*.war
+*.ear
+*.zip
+*.gz
+*.rar
+
+# Captain #
+captainJSP/
+captainHT/
+casabacXML/
+
+### Deployment, Build ... ###
+target/
+node_modules/
+bower_components/
+dist/
+
+### SonarQube ###
+# SonarLint working directories, configuration files (including credentials)
+.sonarlint/
