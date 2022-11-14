@@ -18,6 +18,7 @@ public class IataExchangeRateApplication {
 	Map<String, String> countries = new TreeMap<>();
 	DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
 	WriteToCSVService writeToCSVService = new WriteToCSVService();
+	static final String csvFilePath = "src/de/example/iata/KursExportNew.csv";
 	
 	public void run() throws Exception {
 		readIataExchangeRates();
@@ -36,7 +37,7 @@ public class IataExchangeRateApplication {
 	}
 	
 	private void readIataExchangeRates() {
-		try (BufferedReader br = new BufferedReader(new FileReader("src/de/example/iata/KursExport.csv", java.nio.charset.StandardCharsets.UTF_8))) {
+		try (BufferedReader br = new BufferedReader(new FileReader(csvFilePath, java.nio.charset.StandardCharsets.UTF_8))) {
     		String line;
     		while ((line = br.readLine()) != null) {
         		String[] values = line.split(";");

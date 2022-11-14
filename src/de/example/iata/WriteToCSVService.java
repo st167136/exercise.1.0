@@ -52,7 +52,6 @@ public class WriteToCSVService {
 				rate.add(dateFormat.format(from));
 				rate.add(dateFormat.format(to));
 				rate.add("");
-				rate.add("");
 
 				exchangeRates.add(rate);
 				writeToCSV(rate);
@@ -68,7 +67,7 @@ public class WriteToCSVService {
 		String[] data = rate.toArray(new String[0]);
 		List<String[]> newRate = new ArrayList<>();
 		newRate.add(data);
-		File csvOutputFile = new File("src/de/example/iata/KursExport.csv");
+		File csvOutputFile = new File(IataExchangeRateApplication.csvFilePath);
     	try (PrintWriter pw = new PrintWriter(new FileOutputStream(csvOutputFile, true), true, java.nio.charset.StandardCharsets.UTF_8)) {
         	newRate.stream()
           	.map(this::convertToCSV)
