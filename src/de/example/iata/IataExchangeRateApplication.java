@@ -1,12 +1,9 @@
 package de.example.iata;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.PrintWriter;
+//import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -15,13 +12,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class IataExchangeRateApplication {
 	List<List<String>> exchangeRates = new ArrayList<>();
 	Map<String, String> countries = new TreeMap<>();
 	DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+	WriteToCSVService writeToCSVService = new WriteToCSVService();
 	
 	public void run() throws Exception {
 		readIataExchangeRates();
@@ -40,8 +36,7 @@ public class IataExchangeRateApplication {
 	}
 	
 	private void readIataExchangeRates() {
-		//TODO: Hier muss das Einlesen der IATA-Währungskurse aus der Datei geschehen.	--Done
-		try (BufferedReader br = new BufferedReader(new FileReader("src/de/example/iata/KursExport.csv"))) {
+		try (BufferedReader br = new BufferedReader(new FileReader("src/de/example/iata/KursExport.csv", java.nio.charset.StandardCharsets.UTF_8))) {
     		String line;
     		while ((line = br.readLine()) != null) {
         		String[] values = line.split(";");
@@ -59,6 +54,7 @@ public class IataExchangeRateApplication {
 		} catch (Exception e) {
 			System.out.println(e);
 		}
+		System.out.println(countries);
 	}
 	
 	private void displayMenu() {
@@ -113,93 +109,18 @@ public class IataExchangeRateApplication {
 		if(!matchFound) {
 			System.out.println("Für diesen Zeitraum ist kein Wechselkurs für die gewünschte Währung vorhanden.");
 		}
-
-		//TODO: Mit currencyIsoCode und date sollte hier der Kurs ermittelt und ausgegeben werden.  -- Done 
 	}
 	
 	private void enterIataExchangeRate() throws Exception {
-		boolean validInput = false;
-		while(!validInput) {
-			String currencyIsoCode = getUserInputForStringField("Währung");
-			if(!countries.containsValue(currencyIsoCode.toUpperCase())) {
-				System.out.println("Diese Währung ist im System nicht hinterlegt.");
-				continue;
-			}
-			List<String> allCountriesWithCurrency = new ArrayList<>();
-			for(var entry : countries.entrySet()) {
-				if(entry.getValue().equals(currencyIsoCode.toUpperCase())) {
-					allCountriesWithCurrency.add(entry.getKey());
-				}
-			}
-			Date from = getUserInputForDateField("Von");
-			if(from == null) {
-				continue;
-			} else if(from.after(new Date())) {
-				System.out.println("Dieses Datum liegt in der Zukunft. Bitte geben Sie ein valides Datum ein");
-				continue;
-			}
-			Date to = getUserInputForDateField("Bis");
-			if(to == null) {
-				continue;
-			} else if(to.before(from)) {
-				System.out.println("Dieses Datum liegt vor dem Anfangsdatum. Bitte geben Sie ein Datum ein, welches nach dem Anfangsdatum liegt.");
-				continue;
-			}
-			Double exchangeRate = getUserInputForDoubleField("Euro-Kurs für 1 " + currencyIsoCode);
-			for(int i=0;i<allCountriesWithCurrency.size();i++) {
-				List<String> rate = new ArrayList<>();
-				rate.add(allCountriesWithCurrency.get(i));
-				rate.add(exchangeRate.toString().replace('.', ','));
-				rate.add(currencyIsoCode.toUpperCase());
-				rate.add(this.dateFormat.format(from));
-				rate.add(this.dateFormat.format(to));
-				rate.add("");
-				rate.add("");
-
-				exchangeRates.add(rate);
-				writeToCSV(rate);
-
-				System.out.println("Neuen Währungskurs hinzugefügt: "+rate);
-			}
-			validInput = true;
-		}
-		
-		
-		
-		//TODO: Aus den Variablen muss jetzt ein Kurs zusammengesetzt und in die eingelesenen Kurse eingefügt werden. 	--Done
-	}
-
-	private void writeToCSV(List<String> rate) throws IOException {
-		String[] data = rate.toArray(new String[0]);
-		List<String[]> newRate = new ArrayList<>();
-		newRate.add(data);
-		File csvOutputFile = new File("src/de/example/iata/KursExport.csv");
-    	try (PrintWriter pw = new PrintWriter(new FileOutputStream(csvOutputFile, true))) {
-        	newRate.stream()
-          	.map(this::convertToCSV)
-          	.forEach(pw::println);
-    	}
-	}
-
-	private String convertToCSV(String[] rate) {
-		return Stream.of(rate).map(this::escapeSpecialCharacters).collect(Collectors.joining(";"));
-	}
-
-	private String escapeSpecialCharacters(String data) {
-		String escapedData = data.replaceAll("\\R", " ");
-		if (data.contains(";") || data.contains("\"") || data.contains("'")) {
-			data = data.replace("\"", "\"\"");
-			escapedData = "\"" + data + "\"";
-		}
-		return escapedData;
+		exchangeRates = this.writeToCSVService.enterNewExchangeRate(exchangeRates, countries, dateFormat);
 	}
 	
-	private String getUserInputForStringField(String fieldName) throws Exception {
+	protected String getUserInputForStringField(String fieldName) throws Exception {
 		System.out.print(fieldName + ": ");
 		return getUserInput();
 	}
 	
-	private Date getUserInputForDateField(String fieldName) throws Exception {
+	protected Date getUserInputForDateField(String fieldName) throws Exception {
 		System.out.print(fieldName + " (tt.mm.jjjj): ");
 		String dateString = getUserInput();
 		long count = dateString.chars().filter(ch -> ch == '.').count();
@@ -211,7 +132,7 @@ public class IataExchangeRateApplication {
 		return res;
 	}
 	
-	private Double getUserInputForDoubleField(String fieldName) throws Exception {
+	protected Double getUserInputForDoubleField(String fieldName) throws Exception {
 		String doubleString = getUserInputForStringField(fieldName);
 		if(doubleString.indexOf(',') != -1) {
 			doubleString = doubleString.replace(',', '.');
