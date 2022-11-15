@@ -101,7 +101,7 @@ public class IataExchangeRateApplication {
 							&& date.after(java.text.DateFormat.getDateInstance().parse(exchangeRates.get(i).get(3)))
 							|| date.equals(java.text.DateFormat.getDateInstance().parse(exchangeRates.get(i).get(3)))
 							|| date.equals(java.text.DateFormat.getDateInstance().parse(exchangeRates.get(i).get(4)))) {
-					System.out.println("1 " + currencyIsoCode.toUpperCase() + " entspricht " + exchangeRates.get(i).get(1) + " Euro.");
+					System.out.println("1 Euro entspricht " + exchangeRates.get(i).get(1) + " " + currencyIsoCode.toUpperCase()+".");
 					matchFound = true;
 					return;
 				}

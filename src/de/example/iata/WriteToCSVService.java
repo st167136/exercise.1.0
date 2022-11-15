@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -43,11 +44,12 @@ public class WriteToCSVService {
 				System.out.println("Dieses Datum liegt vor dem Anfangsdatum. Bitte geben Sie ein Datum ein, welches nach dem Anfangsdatum liegt.");
 				continue;
 			}
-			Double exchangeRate = iataExchangeRateApplication.getUserInputForDoubleField("Euro-Kurs für 1 " + currencyIsoCode);
+			Double exchangeRate = 1/iataExchangeRateApplication.getUserInputForDoubleField("Euro-Kurs für 1 " + currencyIsoCode);
+			
 			for(int i=0;i<allCountriesWithCurrency.size();i++) {
 				List<String> rate = new ArrayList<>();
 				rate.add(allCountriesWithCurrency.get(i));
-				rate.add(exchangeRate.toString().replace('.', ','));
+				rate.add(new DecimalFormat("##.######").format(exchangeRate).replace('.', ','));
 				rate.add(currencyIsoCode.toUpperCase());
 				rate.add(dateFormat.format(from));
 				rate.add(dateFormat.format(to));
